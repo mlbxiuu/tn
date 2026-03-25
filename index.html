@@ -1,0 +1,352 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invitation Card</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Bebas+Neue&family=Dancing+Script:wght@700&family=Special+Elite&family=Poppins:wght@700;800&family=Courier+Prime:wght@400;700&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0d0d0d;
+      /* Nền đen lúc đầu cho Terminal */
+      font-family: 'Courier Prime', monospace;
+      padding: 40px 20px;
+      transition: background 1s ease;
+    }
+
+    /* --- TERMINAL STYLES --- */
+    #terminal-window {
+      width: 90%;
+      max-width: 600px;
+      background: #1a1a1a;
+      border-radius: 8px;
+      padding: 25px;
+      border: 1px solid #333;
+      color: #00ff41;
+      font-family: 'Courier Prime', monospace;
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 18px;
+      background: #00ff41;
+      animation: blink 1s infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0;
+      }
+    }
+
+    /* --- INVITATION LAYOUT (Ẩn lúc đầu) --- */
+    #invitation-screen {
+      display: none;
+      opacity: 0;
+      animation: fadeInCard 1.2s ease-out forwards;
+    }
+
+    @keyframes fadeInCard {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Outer wrapper — cream card with subtle noise */
+    .poster {
+      position: relative;
+      width: 420px;
+      min-height: 620px;
+      background: #F5F0E8;
+      border-radius: 6px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 24px 28px;
+    }
+
+    /* Noise texture overlay */
+    .poster::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    .bg-text {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Extenda 40 Hecto', 'Bebas Neue', sans-serif;
+      line-height: 1;
+      color: #2B5BA8;
+      letter-spacing: 4px;
+      user-select: none;
+      white-space: nowrap;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .bg-text.top {
+      top: -2px;
+      font-size: 108px;
+      letter-spacing: 0px;
+    }
+
+    .bg-text.bottom {
+      bottom: -10px;
+      font-size: 130px;
+    }
+
+    .handwrite-overlay {
+      position: absolute;
+      font-family: 'Abramo', 'Dancing Script', serif;
+      font-size: 52px;
+      color: rgba(255, 255, 255, 0.92);
+      z-index: 2;
+      pointer-events: none;
+      letter-spacing: 2px;
+    }
+
+    .handwrite-overlay.top {
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%) rotate(-8deg);
+    }
+
+    .handwrite-overlay.bottom {
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%) rotate(-6deg);
+    }
+
+    .card {
+      position: relative;
+      z-index: 10;
+      background: #FDFBF7;
+      width: 100%;
+      border-radius: 3px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      transform: rotate(-3deg);
+      padding: 22px 24px 24px;
+      transition: transform 0.3s ease;
+      margin: 100px 0;
+    }
+
+    .card:hover {
+      transform: rotate(0deg);
+    }
+
+    .greeting {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: #222;
+      text-align: center;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .info-row {
+      margin-bottom: 14px;
+    }
+
+    .label {
+      display: inline-block;
+      background: #2B5BA8;
+      color: #fff;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 2px;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-family: 'Space Mono', monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e5e5e5;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .rsvp {
+      text-align: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: #555;
+      letter-spacing: 1px;
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px dashed #ccc;
+    }
+
+    .signature {
+      font-family: 'Space Mono', monospace;
+      font-size: 36px;
+      color: #1a1a1a;
+      text-align: center;
+      margin-top: 10px;
+      display: block;
+    }
+
+    @media (max-width: 480px) {
+      .poster {
+        width: 340px;
+        min-height: 520px;
+      }
+
+      .bg-text.top {
+        font-size: 88px;
+        letter-spacing: 0px;
+        top: 0px;
+      }
+
+      .bg-text.bottom {
+        font-size: 100px;
+      }
+
+      .handwrite-overlay {
+        font-size: 40px;
+      }
+
+      .card {
+        margin: 80px 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="terminal-window">
+    <div id="typewriter"></div>
+  </div>
+
+  <div id="invitation-screen">
+    <div class="poster">
+      <div class="bg-text top">GRADUATION</div>
+      <div class="handwrite-overlay top">graduation</div>
+
+      <div class="card">
+        <p class="greeting">THÂN MỜI CÁC BẠN ĐẾN DỰ<br>BUỔI LỄ TỐT NGHIỆP CỦA MÌNH</p>
+
+        <div class="info-row">
+          <span class="label">NGÀY</span>
+          <span class="info-value">10 THÁNG 4 NĂM 2026</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">THỜI GIAN</span>
+          <span class="info-value">8:00 AM</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">ĐỊA ĐIỂM</span>
+          <span class="info-value">ĐẠI HỌC NGOẠI NGỮ - TIN HỌC TPHCM (102 LÊ QUANG ĐẠO, Q12)
+          </span>
+        </div>
+
+        <div class="rsvp">VUI LÒNG XÁC NHẬN VỚI MLBXIUU_</div>
+        <span class="signature">mlbxiuu_</span>
+      </div>
+
+      <div class="bg-text bottom">PARTY</div>
+      <div class="handwrite-overlay bottom">party</div>
+    </div>
+  </div>
+
+  <script>
+    // PHẦN SCRIPT GÕ CHỮ
+    const lines = [
+      "> sudo system_init --status: graduation",
+      "> [OK] Database connection established...",
+      "> [OK] 3,5 years of hard work processed...",
+      "> [OK] Ready to deploy new chapter...",
+      "> cat invitation_content.json",
+      "------------------------------------"
+    ];
+
+    const typewriter = document.getElementById('typewriter');
+    let lineIdx = 0;
+
+    function typeLine() {
+      if (lineIdx < lines.length) {
+        let div = document.createElement('div');
+        div.style.marginBottom = "10px";
+        div.style.lineHeight = "1.4";
+        typewriter.appendChild(div);
+
+        let charIdx = 0;
+        let currentLine = lines[lineIdx];
+
+        function typeChar() {
+          if (charIdx < currentLine.length) {
+            div.innerHTML += currentLine[charIdx];
+            charIdx++;
+            setTimeout(typeChar, 35); // Tốc độ gõ chữ
+          } else {
+            lineIdx++;
+            setTimeout(typeLine, 600); // Khoảng nghỉ giữa các dòng
+          }
+        }
+        typeChar();
+      } else {
+        typewriter.innerHTML += '<span class="cursor"></span>';
+        setTimeout(() => {
+          // Hiệu ứng chuyển cảnh
+          document.getElementById('terminal-window').style.display = 'none';
+          document.body.style.background = '#e8e4dc'; // Đổi màu nền trang web
+          document.getElementById('invitation-screen').style.display = 'block';
+        }, 1200);
+      }
+    }
+
+    window.onload = typeLine;
+  </script>
+
+</body>
+
+</html>
