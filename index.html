@@ -669,27 +669,43 @@ document.addEventListener('keydown', () => ensureAudio(), { once: true });
 /* ─────────────────────────────────────────────
    TYPEWRITER ENGINE
 ───────────────────────────────────────────── */
+
+// const segments = [
+//   { cls: 'dim',    text: 'Last login: Fri Apr 10 07:58:44 on ttys002' },
+//   { cls: 'prompt', text: '~/desktop/graduation % ' },
+//   { cls: 'info',   text: 'sudo bash graduation_init.sh --verbose' },
+//   { cls: 'dim',    text: '' },
+//   { cls: 'ok',     text: '[✓] Checking system requirements............. PASS' },
+//   { cls: 'ok',     text: '[✓] Mounting memory drive: 3.5 years........... OK' },
+//   { cls: 'ok',     text: '[✓] Processing late_nights.log.................. OK' },
+//   { cls: 'ok',     text: '[✓] Compiling thesis_final_v9_FINAL_real.pdf.... OK' },
+//   { cls: 'warn',   text: '[!] Warning: caffeine.dependency > threshold' },
+//   { cls: 'ok',     text: '[✓] Resolving all dependencies.................. OK' },
+//   { cls: 'dim',    text: '' },
+//   { cls: 'PROGRESS', label: 'Packaging invitation payload', steps: 32 },
+//   { cls: 'dim',    text: '' },
+//   { cls: 'ok',     text: '[✓] Invitation payload compiled successfully.' },
+//   { cls: 'warn',   text: '[!] Warning: diploma may cause sudden life decisions.' },
+//   { cls: 'dim',    text: '' },
+//   { cls: 'DEPLOY', text: '' },
+//   { cls: 'prompt', text: '~/desktop/graduation % cat invitation.json' },
+//   { cls: 'dim',    text: '──────────────────────────────────────────────────' },
+// ];
+
+
 const segments = [
-  { cls: 'dim',    text: 'Last login: Fri Apr 10 07:58:44 on ttys002' },
-  { cls: 'prompt', text: '~/desktop/graduation % ' },
-  { cls: 'info',   text: 'sudo bash graduation_init.sh --verbose' },
-  { cls: 'dim',    text: '' },
-  { cls: 'ok',     text: '[✓] Checking system requirements............. PASS' },
-  { cls: 'ok',     text: '[✓] Mounting memory drive: 3.5 years........... OK' },
-  { cls: 'ok',     text: '[✓] Processing late_nights.log.................. OK' },
-  { cls: 'ok',     text: '[✓] Compiling thesis_final_v9_FINAL_real.pdf.... OK' },
-  { cls: 'warn',   text: '[!] Warning: caffeine.dependency > threshold' },
-  { cls: 'ok',     text: '[✓] Resolving all dependencies.................. OK' },
+  
+ 
+  { cls: 'ok',     text: 'đủ nắng hoa sẽ nở,...' },
   { cls: 'dim',    text: '' },
   { cls: 'PROGRESS', label: 'Packaging invitation payload', steps: 32 },
   { cls: 'dim',    text: '' },
   { cls: 'ok',     text: '[✓] Invitation payload compiled successfully.' },
-  { cls: 'warn',   text: '[!] Warning: diploma may cause sudden life decisions.' },
   { cls: 'dim',    text: '' },
   { cls: 'DEPLOY', text: '' },
-  { cls: 'prompt', text: '~/desktop/graduation % cat invitation.json' },
   { cls: 'dim',    text: '──────────────────────────────────────────────────' },
 ];
+
 
 const typewriter = document.getElementById('typewriter');
 let si = 0;
