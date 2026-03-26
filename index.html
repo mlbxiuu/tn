@@ -1,352 +1,835 @@
-﻿<!DOCTYPE html>
-<html lang="vi">
+﻿
 
+<!DOCTYPE html>
+<html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Invitation Card</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Bebas+Neue&family=Dancing+Script:wght@700&family=Special+Elite&family=Poppins:wght@700;800&family=Courier+Prime:wght@400;700&display=swap"
-    rel="stylesheet">
+  <title>Thư Mời Tốt Nghiệp</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dancing+Script:wght@600;700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+
   <style>
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:      #2B5AB8;
+      --blue-dark: #1A3D8A;
+      --cream:     #F2EDE0;
+      --cream-card:#FDFAF3;
+      --ink:       #18181B;
+      --ink-muted: #52525B;
+      --line:      #D4CEBC;
+      --green-t:   #00FF41;
+      --green-glow: rgba(0,255,65,0.4);
     }
 
+    /* ══════════════════════════════════════
+       BODY
+    ══════════════════════════════════════ */
+    html, body {
+      height: 100%;
+    }
     body {
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #0d0d0d;
-      /* Nền đen lúc đầu cho Terminal */
-      font-family: 'Courier Prime', monospace;
-      padding: 40px 20px;
-      transition: background 1s ease;
+      background: #050505;
+      font-family: 'DM Mono', monospace;
+      padding: 40px 16px;
+      overflow: hidden;
+      transition: background 1.4s ease;
+    }
+    body.revealed {
+      background: #D8D0BF;
+      overflow: auto;
     }
 
-    /* --- TERMINAL STYLES --- */
-    #terminal-window {
-      width: 90%;
-      max-width: 600px;
-      background: #1a1a1a;
-      border-radius: 8px;
-      padding: 25px;
-      border: 1px solid #333;
-      color: #00ff41;
-      font-family: 'Courier Prime', monospace;
-      z-index: 100;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    /* ══════════════════════════════════════
+       MATRIX RAIN CANVAS
+    ══════════════════════════════════════ */
+    #matrix-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.06;
+      pointer-events: none;
     }
+
+    /* ══════════════════════════════════════
+       SCANLINES OVERLAY
+    ══════════════════════════════════════ */
+    #scanlines {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      animation: scanMove 8s linear infinite;
+      opacity: 0.5;
+    }
+    @keyframes scanMove {
+      0%   { background-position: 0 0; }
+      100% { background-position: 0 100px; }
+    }
+
+    /* Vignette */
+    #vignette {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: radial-gradient(ellipse at center,
+        transparent 55%,
+        rgba(0,0,0,0.65) 100%);
+    }
+
+    /* ══════════════════════════════════════
+       TERMINAL WINDOW
+    ══════════════════════════════════════ */
+    #terminal-shell {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 660px;
+      transition: all 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    #terminal-window {
+      width: 100%;
+      background: rgba(10,12,10,0.96);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #1e2e1e;
+      box-shadow:
+        0 0 0 1px rgba(0,255,65,0.06),
+        0 0 30px rgba(0,255,65,0.08),
+        0 30px 80px rgba(0,0,0,0.8);
+      backdrop-filter: blur(4px);
+    }
+
+    /* glitch animation on terminal */
+    .glitching {
+      animation: glitchFrame 0.4s steps(2) forwards;
+    }
+    @keyframes glitchFrame {
+      0%   { transform: translate(0,0) skewX(0deg); filter: none; }
+      20%  { transform: translate(-4px, 1px) skewX(-2deg); filter: hue-rotate(90deg) brightness(1.4); }
+      40%  { transform: translate(4px, -1px) skewX(2deg);  filter: hue-rotate(-90deg) brightness(0.8); }
+      60%  { transform: translate(-2px, 2px) skewX(0deg);  filter: invert(0.05); }
+      80%  { transform: translate(2px, -2px) skewX(1deg);  filter: none; }
+      100% { transform: translate(0,0) skewX(0deg); filter: none; }
+    }
+
+    /* terminal expand morph */
+    #terminal-shell.morphing {
+      transform: scale(8) !important;
+      opacity: 0 !important;
+      transition: transform 1.0s cubic-bezier(0.4,0,0.2,1),
+                  opacity 0.7s ease 0.2s !important;
+    }
+
+    /* ── titlebar ── */
+    .terminal-bar {
+      background: #141414;
+      padding: 11px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #1e2e1e;
+      position: relative;
+    }
+    .t-dot { width: 13px; height: 13px; border-radius: 50%; cursor: default; }
+    .t-dot.red    { background: #FF5F57; box-shadow: 0 0 6px rgba(255,95,87,0.5); }
+    .t-dot.yellow { background: #FEBC2E; box-shadow: 0 0 6px rgba(254,188,46,0.5); }
+    .t-dot.green  { background: #28C840; box-shadow: 0 0 6px rgba(40,200,64,0.5); }
+    .terminal-title {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      font-size: 11px; color: #3a4a3a; letter-spacing: 1.5px;
+    }
+    .terminal-time {
+      margin-left: auto;
+      font-size: 11px;
+      color: #2a4a2a;
+      letter-spacing: 1px;
+    }
+
+    /* ── body ── */
+    .terminal-body {
+      padding: 22px 26px 10px;
+      min-height: 240px;
+      color: var(--green-t);
+      font-family: 'DM Mono', monospace;
+      font-size: 13.5px;
+      line-height: 1.75;
+      position: relative;
+    }
+
+    /* glow on text */
+    .terminal-body {
+      text-shadow: 0 0 8px var(--green-glow);
+    }
+
+    .t-line { margin-bottom: 1px; position: relative; }
+    .t-dim    { color: #2d5c2d; text-shadow: none; }
+    .t-ok     { color: #28C840; text-shadow: 0 0 10px rgba(40,200,64,0.5); }
+    .t-warn   { color: #FEBC2E; text-shadow: 0 0 10px rgba(254,188,46,0.4); }
+    .t-prompt { color: #00e5ff; text-shadow: 0 0 10px rgba(0,229,255,0.5); }
+    .t-error  { color: #FF5F57; text-shadow: 0 0 10px rgba(255,95,87,0.5); }
+    .t-info   { color: #c0c0c0; text-shadow: none; }
 
     .cursor {
       display: inline-block;
-      width: 10px;
-      height: 18px;
-      background: #00ff41;
-      animation: blink 1s infinite;
+      width: 9px; height: 16px;
+      background: var(--green-t);
+      animation: blink 1s step-end infinite;
       vertical-align: middle;
+      margin-left: 2px;
+      box-shadow: 0 0 8px var(--green-glow);
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ── progress bar ── */
+    .progress-wrap {
+      margin: 10px 0 6px;
+    }
+    .progress-label {
+      font-size: 11px;
+      color: #2d5c2d;
+      letter-spacing: 1px;
+      margin-bottom: 5px;
+    }
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: #0d1f0d;
+      border-radius: 3px;
+      overflow: hidden;
+      border: 1px solid #1a3a1a;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 3px;
+      background: linear-gradient(90deg,
+        #00ff41 0%,
+        #00e5ff 50%,
+        #00ff41 100%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s linear infinite;
+      transition: width 0.06s linear;
+      box-shadow: 0 0 10px rgba(0,255,65,0.6);
+    }
+    @keyframes shimmer {
+      0%   { background-position: 0% 0; }
+      100% { background-position: 200% 0; }
     }
 
-    @keyframes blink {
-      50% {
-        opacity: 0;
-      }
+    /* ── deploy banner ── */
+    .deploy-banner {
+      border: 1px solid #00ff41;
+      border-radius: 4px;
+      padding: 10px 14px;
+      margin: 10px 0;
+      display: none;
+      background: rgba(0,255,65,0.04);
+      box-shadow: 0 0 20px rgba(0,255,65,0.1), inset 0 0 15px rgba(0,255,65,0.03);
+    }
+    .deploy-banner.visible { display: block; }
+    .deploy-title {
+      color: #00ff41;
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      text-shadow: 0 0 12px var(--green-glow);
+    }
+    .deploy-sub {
+      color: #2d5c2d;
+      font-size: 10.5px;
+      letter-spacing: 1px;
+      margin-top: 3px;
     }
 
-    /* --- INVITATION LAYOUT (Ẩn lúc đầu) --- */
+    /* ══════════════════════════════════════
+       INVITATION SCREEN
+    ══════════════════════════════════════ */
     #invitation-screen {
       display: none;
       opacity: 0;
-      animation: fadeInCard 1.2s ease-out forwards;
+      transform: scale(0.94) translateY(14px);
+      animation: revealCard 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      position: relative;
+      z-index: 10;
+    }
+    @keyframes revealCard {
+      to { opacity: 1; transform: scale(1) translateY(0); }
     }
 
-    @keyframes fadeInCard {
-      from {
-        opacity: 0;
-        transform: scale(0.9);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    /* Outer wrapper — cream card with subtle noise */
+    /* ── POSTER ── */
     .poster {
       position: relative;
-      width: 420px;
-      min-height: 620px;
-      background: #F5F0E8;
+      width: 630px;
+      min-height: 800px;
+      background: var(--cream);
       border-radius: 6px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow:
+        0 2px 0 rgba(255,255,255,0.6) inset,
+        0 30px 80px rgba(0,0,0,0.30),
+        0 6px 20px rgba(0,0,0,0.18);
       overflow: hidden;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px 24px 28px;
+      padding: 20px 71px 26px;
     }
-
-    /* Noise texture overlay */
-    .poster::before {
+    .poster::after {
       content: '';
-      position: absolute;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.6;
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='0.05'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; mix-blend-mode: multiply;
     }
 
-    .bg-text {
+    /* ── BIG BG TEXT ── */
+    .bg-word {
       position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: 'Extenda 40 Hecto', 'Bebas Neue', sans-serif;
-      line-height: 1;
-      color: #2B5BA8;
-      letter-spacing: 4px;
+      left: 50%; transform: translateX(-50%);
+      font-family: 'Bebas Neue', sans-serif;
+      color: var(--blue);
+      line-height: 0.88;
       user-select: none;
       white-space: nowrap;
       z-index: 1;
       pointer-events: none;
     }
+    .bg-word.top    { top: -12px;  font-size: 200px; letter-spacing: -3px; }
+    .bg-word.bottom { bottom: -22px; font-size: 236px; letter-spacing: -4px; }
 
-    .bg-text.top {
-      top: -2px;
-      font-size: 108px;
-      letter-spacing: 0px;
-    }
-
-    .bg-text.bottom {
-      bottom: -10px;
-      font-size: 130px;
-    }
-
-    .handwrite-overlay {
+    .script-overlay {
       position: absolute;
-      font-family: 'Abramo', 'Dancing Script', serif;
-      font-size: 52px;
-      color: rgba(255, 255, 255, 0.92);
+      font-family: 'Dancing Script', cursive;
+      color: rgba(255,255,255,0.90);
       z-index: 2;
       pointer-events: none;
-      letter-spacing: 2px;
+      line-height: 1;
     }
+    .script-overlay.top    { top:14px; left:50%; font-size:68px; font-weight:600; transform:translateX(-46%) rotate(-9deg); text-shadow:0 2px 8px rgba(0,0,0,0.15); }
+    .script-overlay.bottom { bottom:12px; left:50%; font-size:60px; font-weight:600; transform:translateX(-50%) rotate(-5deg); text-shadow:0 2px 8px rgba(0,0,0,0.15); }
 
-    .handwrite-overlay.top {
-      top: 18px;
-      left: 50%;
-      transform: translateX(-50%) rotate(-8deg);
-    }
-
-    .handwrite-overlay.bottom {
-      bottom: 14px;
-      left: 50%;
-      transform: translateX(-50%) rotate(-6deg);
-    }
-
+    /* ── CARD ── */
     .card {
       position: relative;
       z-index: 10;
-      background: #FDFBF7;
+      background: var(--cream-card);
       width: 100%;
-      border-radius: 3px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8);
-      transform: rotate(-3deg);
-      padding: 22px 24px 24px;
-      transition: transform 0.3s ease;
-      margin: 100px 0;
+      border-radius: 2px;
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.9) inset,
+        0 10px 40px rgba(0,0,0,0.20),
+        0 3px 10px rgba(0,0,0,0.14);
+      transform: rotate(-3.5deg);
+      padding: 26px 26px 22px;
+      transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s ease;
+      margin: 114px 0 118px;
     }
-
     .card:hover {
       transform: rotate(0deg);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 0 16px 56px rgba(0,0,0,0.22), 0 4px 14px rgba(0,0,0,0.14);
+    }
+    .card::before {
+      content: ''; position: absolute;
+      top: -10px; left: 50%; transform: translateX(-50%) rotate(1deg);
+      width: 60px; height: 18px;
+      background: rgba(180,166,130,0.35);
+      border-radius: 2px; backdrop-filter: blur(1px); z-index: 11;
     }
 
+    /* ── CARD CONTENT ── */
     .greeting {
-      font-family: 'Space Mono', monospace;
-      font-size: 11px;
-      color: #222;
-      text-align: center;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      line-height: 1.6;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid #ddd;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px; color: var(--ink);
+      text-align: center; letter-spacing: 2px;
+      text-transform: uppercase; line-height: 1.7;
+      margin-bottom: 16px; padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
     }
-
-    .info-row {
-      margin-bottom: 14px;
-    }
-
+    .info-block { margin-bottom: 14px; }
     .label {
-      display: inline-block;
-      background: #2B5BA8;
-      color: #fff;
-      font-family: 'Space Mono', monospace;
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      padding: 2px 8px;
-      border-radius: 2px;
-      margin-bottom: 4px;
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--blue); color: #fff;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 2.5px; text-transform: uppercase;
+      padding: 4px 11px 3px; border-radius: 2px; margin-bottom: 5px;
+      position: relative;
     }
-
+    .label::before {
+      content: ''; position: absolute;
+      left: -4px; top: 50%; transform: translateY(-50%);
+      width: 4px; height: 70%;
+      background: var(--blue-dark); border-radius: 1px 0 0 1px;
+    }
     .info-value {
-      font-family: 'Space Mono', monospace;
-      font-size: 15px;
-      font-weight: 700;
-      color: #1a1a1a;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #e5e5e5;
+      font-family: 'Courier Prime', monospace;
+      font-size: 18px; font-weight: 700;
+      color: var(--ink); letter-spacing: 1.8px;
+      text-transform: uppercase; padding-bottom: 11px;
+      border-bottom: 1px solid var(--line);
+      display: block; line-height: 1.35;
+    }
+    .info-value.no-border { border-bottom: none; padding-bottom: 2px; }
+    .info-sub {
       display: block;
-      margin-top: 2px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11.5px; font-weight: 400;
+      color: var(--ink-muted); letter-spacing: 0.5px;
+      text-transform: none; margin-top: 5px; line-height: 1.55;
     }
 
-    .rsvp {
-      text-align: center;
-      font-family: 'Space Mono', monospace;
-      font-size: 10px;
-      color: #555;
-      letter-spacing: 1px;
-      margin-top: 14px;
-      padding-top: 10px;
-      border-top: 1px dashed #ccc;
+    /* ── MAP ── */
+    .map-container {
+      margin-top: 10px; border-radius: 3px;
+      overflow: hidden; border: 1px solid var(--line);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .map-topbar {
+      background: var(--blue); padding: 5px 10px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .map-topbar-dot { width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.35); }
+    .map-topbar-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px; font-weight: 500;
+      color: rgba(255,255,255,0.75); letter-spacing: 2px; text-transform: uppercase;
+    }
+    .map-container iframe {
+      display: block; width: 100%; border: none;
+      filter: sepia(15%) contrast(105%) saturate(90%);
     }
 
+    .map-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: var(--ink); color: #fff;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px; font-weight: 500; letter-spacing: 2px;
+      text-transform: uppercase; padding: 12px 18px;
+      border-radius: 2px; text-decoration: none; margin-top: 8px;
+      border: 1.5px solid var(--ink);
+      transition: border-color 0.2s, transform 0.15s;
+      position: relative; overflow: hidden;
+    }
+    .map-btn::before {
+      content: ''; position: absolute; inset: 0;
+      background: var(--blue); transform: translateX(-101%);
+      transition: transform 0.28s cubic-bezier(0.22,1,0.36,1); z-index: 0;
+    }
+    .map-btn:hover::before { transform: translateX(0); }
+    .map-btn:hover { border-color: var(--blue); }
+    .map-btn:active { transform: scale(0.98); }
+    .map-btn span, .map-btn svg { position: relative; z-index: 1; }
+    .pin-icon { width: 14px; height: 14px; flex-shrink: 0; }
+
+    .divider { border: none; border-top: 1px dashed var(--line); margin: 12px 0; }
+
+    .rsvp-row {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; color: var(--ink-muted); letter-spacing: 1.5px;
+      text-transform: uppercase; margin-top: 14px; padding-top: 12px;
+      border-top: 1px dashed var(--line);
+    }
     .signature {
-      font-family: 'Space Mono', monospace;
-      font-size: 36px;
-      color: #1a1a1a;
-      text-align: center;
-      margin-top: 10px;
-      display: block;
+      font-family: 'Dancing Script', cursive;
+      font-size: 44px; font-weight: 700; color: var(--ink);
+      text-align: center; margin-top: 8px; display: block; line-height: 1.1;
     }
 
-    @media (max-width: 480px) {
-      .poster {
-        width: 340px;
-        min-height: 520px;
-      }
-
-      .bg-text.top {
-        font-size: 88px;
-        letter-spacing: 0px;
-        top: 0px;
-      }
-
-      .bg-text.bottom {
-        font-size: 100px;
-      }
-
-      .handwrite-overlay {
-        font-size: 40px;
-      }
-
-      .card {
-        margin: 80px 0;
-      }
+    /* ── RESPONSIVE ── */
+    @media (max-width: 680px) {
+      .poster { width: min(420px, 96vw); min-height: 620px; padding: 14px 14px 18px; }
+      .bg-word.top    { font-size: 108px; }
+      .bg-word.bottom { font-size: 128px; }
+      .script-overlay.top    { font-size: 44px; }
+      .script-overlay.bottom { font-size: 40px; }
+      .card { margin: 76px 0 82px; padding: 18px 16px 16px; }
+      .info-value { font-size: 13px; }
     }
   </style>
 </head>
-
 <body>
 
+<!-- Matrix canvas -->
+<canvas id="matrix-canvas"></canvas>
+<!-- Scanlines -->
+<div id="scanlines"></div>
+<!-- Vignette -->
+<div id="vignette"></div>
+
+<!-- ══════════════════════════════════
+     TERMINAL
+══════════════════════════════════ -->
+<div id="terminal-shell">
   <div id="terminal-window">
-    <div id="typewriter"></div>
+    <div class="terminal-bar">
+      <div class="t-dot red"></div>
+      <div class="t-dot yellow"></div>
+      <div class="t-dot green"></div>
+      <span class="terminal-title">graduation_init.sh — bash — 80×24</span>
+      <span class="terminal-time" id="live-clock"></span>
+    </div>
+    <div class="terminal-body" id="typewriter"></div>
   </div>
+</div>
 
-  <div id="invitation-screen">
-    <div class="poster">
-      <div class="bg-text top">GRADUATION</div>
-      <div class="handwrite-overlay top">graduation</div>
+<!-- ══════════════════════════════════
+     INVITATION
+══════════════════════════════════ -->
+<div id="invitation-screen">
+  <div class="poster">
+    <div class="bg-word top">GRADUATION</div>
+    <div class="script-overlay top">Graduation</div>
 
-      <div class="card">
-        <p class="greeting">THÂN MỜI CÁC BẠN ĐẾN DỰ<br>BUỔI LỄ TỐT NGHIỆP CỦA MÌNH</p>
+    <div class="card">
+      <p class="greeting">THÂN MỜI CÁC BẠN ĐẾN DỰ<br>BUỔI LỄ TỐT NGHIỆP CỦA MÌNH</p>
 
-        <div class="info-row">
-          <span class="label">NGÀY</span>
-          <span class="info-value">10 THÁNG 4 NĂM 2026</span>
+      <div class="info-block">
+        <span class="label">Ngày</span>
+        <span class="info-value">10 Tháng 4 Năm 2026</span>
+      </div>
+      <div class="info-block">
+        <span class="label">Thời gian</span>
+        <span class="info-value">8:00 AM</span>
+      </div>
+      <div class="info-block">
+        <span class="label">Địa điểm</span>
+        <span class="info-value no-border">
+          Hoc Mon Campus
+          <span class="info-sub">806 Lê Quang Đạo, Trung Mỹ Tây, Quận 12, Hồ Chí Minh</span>
+        </span>
+        <div class="map-container">
+          <div class="map-topbar">
+            <div class="map-topbar-dot"></div>
+            <div class="map-topbar-dot"></div>
+            <span class="map-topbar-label">Live Location</span>
+          </div>
+          <iframe
+            src="https://maps.google.com/maps?q=806+L%C3%AA+Quang+%C4%90%E1%BA%A1o,+Trung+M%E1%BB%B9+T%C3%A2y,+Qu%E1%BA%ADn+12,+H%E1%BB%93+Ch%C3%AD+Minh&t=&z=15&ie=UTF8&iwloc=&output=embed"
+            height="155" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
         </div>
-
-        <div class="info-row">
-          <span class="label">THỜI GIAN</span>
-          <span class="info-value">8:00 AM</span>
-        </div>
-
-        <div class="info-row">
-          <span class="label">ĐỊA ĐIỂM</span>
-          <span class="info-value">ĐẠI HỌC NGOẠI NGỮ - TIN HỌC TPHCM (102 LÊ QUANG ĐẠO, Q12)
-          </span>
-        </div>
-
-        <div class="rsvp">VUI LÒNG XÁC NHẬN VỚI MLBXIUU_</div>
-        <span class="signature">mlbxiuu_</span>
+        <a href="https://www.google.com/maps/search/?api=1&query=806+Lê+Quang+Đạo,+Trung+Mỹ+Tây,+Quận+12,+Hồ+Chí+Minh"
+           target="_blank" rel="noopener noreferrer" class="map-btn">
+          <svg class="pin-icon" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
+          </svg>
+          <span>Mở trên Google Maps</span>
+        </a>
       </div>
 
-      <div class="bg-text bottom">PARTY</div>
-      <div class="handwrite-overlay bottom">party</div>
+      <hr class="divider">
+      <div class="rsvp-row">
+        <span>See you</span>
+        <!-- <strong style="color:var(--ink);letter-spacing:1px;">mlbxiuu_</strong> -->
+      </div>
+      <span class="signature">mlbxiuu_</span>
     </div>
+
+    <div class="bg-word bottom">PARTY</div>
+    <div class="script-overlay bottom">party</div>
   </div>
+</div>
 
-  <script>
-    // PHẦN SCRIPT GÕ CHỮ
-    const lines = [
-      "> sudo system_init --status: graduation",
-      "> [OK] Database connection established...",
-      "> [OK] 3,5 years of hard work processed...",
-      "> [OK] Ready to deploy new chapter...",
-      "> cat invitation_content.json",
-      "------------------------------------"
-    ];
+<script>
+/* ─────────────────────────────────────────────
+   LIVE CLOCK
+───────────────────────────────────────────── */
+function updateClock() {
+  const el = document.getElementById('live-clock');
+  if (!el) return;
+  const now = new Date();
+  el.textContent = now.toLocaleTimeString('vi-VN', { hour12: false });
+}
+updateClock();
+setInterval(updateClock, 1000);
 
-    const typewriter = document.getElementById('typewriter');
-    let lineIdx = 0;
+/* ─────────────────────────────────────────────
+   MATRIX RAIN
+───────────────────────────────────────────── */
+(function initMatrix() {
+  const canvas = document.getElementById('matrix-canvas');
+  const ctx = canvas.getContext('2d');
+  let cols, drops;
+  const FONT_SIZE = 13;
+  const CHARS = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホ01ﾊﾐﾋｰｳｦﾏ';
 
-    function typeLine() {
-      if (lineIdx < lines.length) {
-        let div = document.createElement('div');
-        div.style.marginBottom = "10px";
-        div.style.lineHeight = "1.4";
-        typewriter.appendChild(div);
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    cols = Math.floor(canvas.width / FONT_SIZE);
+    drops = Array.from({ length: cols }, () => Math.random() * -50);
+  }
+  resize();
+  window.addEventListener('resize', resize);
 
-        let charIdx = 0;
-        let currentLine = lines[lineIdx];
-
-        function typeChar() {
-          if (charIdx < currentLine.length) {
-            div.innerHTML += currentLine[charIdx];
-            charIdx++;
-            setTimeout(typeChar, 35); // Tốc độ gõ chữ
-          } else {
-            lineIdx++;
-            setTimeout(typeLine, 600); // Khoảng nghỉ giữa các dòng
-          }
-        }
-        typeChar();
-      } else {
-        typewriter.innerHTML += '<span class="cursor"></span>';
-        setTimeout(() => {
-          // Hiệu ứng chuyển cảnh
-          document.getElementById('terminal-window').style.display = 'none';
-          document.body.style.background = '#e8e4dc'; // Đổi màu nền trang web
-          document.getElementById('invitation-screen').style.display = 'block';
-        }, 1200);
-      }
+  function draw() {
+    ctx.fillStyle = 'rgba(0,0,0,0.04)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#00FF41';
+    ctx.font = FONT_SIZE + 'px DM Mono, monospace';
+    for (let i = 0; i < drops.length; i++) {
+      const ch = CHARS[Math.floor(Math.random() * CHARS.length)];
+      ctx.fillText(ch, i * FONT_SIZE, drops[i] * FONT_SIZE);
+      if (drops[i] * FONT_SIZE > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i] += 0.5;
     }
+  }
+  setInterval(draw, 55);
+})();
 
-    window.onload = typeLine;
-  </script>
+/* ─────────────────────────────────────────────
+   AUDIO ENGINE  (Web Audio API — no files)
+───────────────────────────────────────────── */
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
 
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+}
+
+function playKeyClick() {
+  try {
+    ensureAudio();
+    const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.04, audioCtx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 8) * 0.18;
+    }
+    const src = audioCtx.createBufferSource();
+    src.buffer = buf;
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(0.6, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+    src.connect(gain); gain.connect(audioCtx.destination);
+    src.start();
+  } catch(e) {}
+}
+
+function playBeep(freq = 880, duration = 0.12, vol = 0.15) {
+  try {
+    ensureAudio();
+    const osc  = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(freq * 1.5, audioCtx.currentTime + duration);
+    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + duration + 0.01);
+  } catch(e) {}
+}
+
+function playDeployChime() {
+  try {
+    ensureAudio();
+    const notes = [523, 659, 784, 1047];
+    notes.forEach((freq, i) => {
+      setTimeout(() => playBeep(freq, 0.18, 0.10), i * 90);
+    });
+  } catch(e) {}
+}
+
+// unlock audio on first interaction
+document.addEventListener('click',  () => ensureAudio(), { once: true });
+document.addEventListener('keydown', () => ensureAudio(), { once: true });
+
+/* ─────────────────────────────────────────────
+   TYPEWRITER ENGINE
+───────────────────────────────────────────── */
+const segments = [
+  { cls: 'dim',    text: 'Last login: Fri Apr 10 07:58:44 on ttys002' },
+  { cls: 'prompt', text: '~/desktop/graduation % ' },
+  { cls: 'info',   text: 'sudo bash graduation_init.sh --verbose' },
+  { cls: 'dim',    text: '' },
+  { cls: 'ok',     text: '[✓] Checking system requirements............. PASS' },
+  { cls: 'ok',     text: '[✓] Mounting memory drive: 3.5 years........... OK' },
+  { cls: 'ok',     text: '[✓] Processing late_nights.log.................. OK' },
+  { cls: 'ok',     text: '[✓] Compiling thesis_final_v9_FINAL_real.pdf.... OK' },
+  { cls: 'warn',   text: '[!] Warning: caffeine.dependency > threshold' },
+  { cls: 'ok',     text: '[✓] Resolving all dependencies.................. OK' },
+  { cls: 'dim',    text: '' },
+  { cls: 'PROGRESS', label: 'Packaging invitation payload', steps: 32 },
+  { cls: 'dim',    text: '' },
+  { cls: 'ok',     text: '[✓] Invitation payload compiled successfully.' },
+  { cls: 'warn',   text: '[!] Warning: diploma may cause sudden life decisions.' },
+  { cls: 'dim',    text: '' },
+  { cls: 'DEPLOY', text: '' },
+  { cls: 'prompt', text: '~/desktop/graduation % cat invitation.json' },
+  { cls: 'dim',    text: '──────────────────────────────────────────────────' },
+];
+
+const typewriter = document.getElementById('typewriter');
+let si = 0;
+let audioUnlocked = false;
+
+function typeLine() {
+  if (si >= segments.length) {
+    typewriter.innerHTML += '<span class="cursor"></span>';
+    setTimeout(doReveal, 1200);
+    return;
+  }
+
+  const seg = segments[si++];
+
+  /* ── PROGRESS BAR segment ── */
+  if (seg.cls === 'PROGRESS') {
+    const wrap = document.createElement('div');
+    wrap.className = 'progress-wrap';
+    const lbl = document.createElement('div');
+    lbl.className = 'progress-label';
+    lbl.textContent = `> ${seg.label}`;
+    const track = document.createElement('div');
+    track.className = 'progress-track';
+    const fill = document.createElement('div');
+    fill.className = 'progress-fill';
+    track.appendChild(fill);
+    wrap.appendChild(lbl); wrap.appendChild(track);
+    typewriter.appendChild(wrap);
+
+    let pct = 0;
+    const total = seg.steps;
+    function stepBar() {
+      if (pct >= total) {
+        lbl.textContent += ' ✓';
+        lbl.style.color = '#28C840';
+        playBeep(660, 0.08, 0.08);
+        setTimeout(typeLine, 400);
+        return;
+      }
+      pct++;
+      const w = Math.round((pct / total) * 100);
+      fill.style.width = w + '%';
+      if (pct % 4 === 0) playKeyClick();
+      setTimeout(stepBar, 38 + Math.random() * 25);
+    }
+    stepBar();
+    return;
+  }
+
+  /* ── DEPLOY BANNER segment ── */
+  if (seg.cls === 'DEPLOY') {
+    const banner = document.createElement('div');
+    banner.className = 'deploy-banner';
+    banner.innerHTML = `
+      <div class="deploy-title">✦ INVITATION READY TO DEPLOY ✦</div>
+      <div class="deploy-sub">STATUS: 200 OK  ·  PAYLOAD: invitation.json  ·  TARGET: /graduation/2026</div>
+    `;
+    typewriter.appendChild(banner);
+    setTimeout(() => {
+      banner.classList.add('visible');
+      playDeployChime();
+    }, 100);
+    setTimeout(typeLine, 1000);
+    return;
+  }
+
+  /* ── Regular text lines ── */
+  // blank line
+  if (seg.text === '') {
+    typewriter.appendChild(document.createElement('br'));
+    setTimeout(typeLine, 120);
+    return;
+  }
+
+  const div = document.createElement('div');
+  div.className = 't-line t-' + seg.cls;
+  typewriter.appendChild(div);
+
+  // split prompt into static + typed parts
+  if (seg.cls === 'prompt' && si < segments.length && segments[si].cls === 'info') {
+    div.textContent = seg.text;
+    si++;
+    const typedDiv = document.createElement('span');
+    typedDiv.className = 't-info';
+    div.appendChild(typedDiv);
+    let ci = 0;
+    const cmdText = segments[si-1] ? segments[si-1].text : seg.text;
+    // use the next info segment
+    const infoSeg = segments[si - 1];
+    typeword(typedDiv, infoSeg.text, 0, typeLine);
+    return;
+  }
+
+  const speed = seg.cls === 'dim' ? 12 : 22;
+  typeword(div, seg.text, speed, typeLine);
+}
+
+function typeword(el, text, speed, done) {
+  let ci = 0;
+  function next() {
+    if (ci < text.length) {
+      el.textContent += text[ci++];
+      if (ci % 2 === 0) playKeyClick();
+      setTimeout(next, speed + Math.random() * 10);
+    } else {
+      const delay = speed === 12 ? 120 : 300;
+      setTimeout(done, delay);
+    }
+  }
+  next();
+}
+
+/* ─────────────────────────────────────────────
+   GLITCH + MORPH REVEAL
+───────────────────────────────────────────── */
+function doReveal() {
+  const shell = document.getElementById('terminal-shell');
+  const win   = document.getElementById('terminal-window');
+
+  // glitch flash
+  win.classList.add('glitching');
+  playBeep(440, 0.06, 0.12);
+  setTimeout(() => playBeep(880, 0.06, 0.08), 80);
+  setTimeout(() => playBeep(220, 0.06, 0.08), 160);
+
+  setTimeout(() => {
+    win.classList.remove('glitching');
+
+    // scanlines fade out
+    document.getElementById('scanlines').style.transition = 'opacity 0.8s';
+    document.getElementById('scanlines').style.opacity = '0';
+    document.getElementById('matrix-canvas').style.transition = 'opacity 0.8s';
+    document.getElementById('matrix-canvas').style.opacity = '0';
+    document.getElementById('vignette').style.transition = 'opacity 0.8s';
+    document.getElementById('vignette').style.opacity = '0';
+
+    // morph terminal into card
+    shell.classList.add('morphing');
+    document.body.classList.add('revealed');
+
+    // deploy sound
+    setTimeout(() => playDeployChime(), 100);
+
+    setTimeout(() => {
+      shell.style.display = 'none';
+      const inv = document.getElementById('invitation-screen');
+      inv.style.display = 'block';
+    }, 900);
+  }, 500);
+}
+
+/* ─────────────────────────────────────────────
+   BOOT
+───────────────────────────────────────────── */
+window.addEventListener('load', () => {
+  setTimeout(typeLine, 400);
+});
+</script>
 </body>
-
 </html>
