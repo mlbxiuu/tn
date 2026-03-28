@@ -521,12 +521,12 @@
       </div>
       <div class="info-block">
         <span class="label">Thời gian</span>
-        <span class="info-value">8:00 AM</span>
+        <span class="info-value">10:00 AM</span>
       </div>
       <div class="info-block">
         <span class="label">Địa điểm</span>
         <span class="info-value no-border">
-          Hoc Mon Campus
+          Huflit (Hoc Mon Campus)
           <span class="info-sub">806 Lê Quang Đạo, Trung Mỹ Tây, Quận 12, Hồ Chí Minh</span>
         </span>
         <div class="map-container">
@@ -563,6 +563,16 @@
 </div>
 
 <script>
+
+/* ─────────────────────────────────────────────
+   URL PARAMETER HANDLER (Lấy tên khách mời)
+───────────────────────────────────────────── */
+const urlParams = new URLSearchParams(window.location.search);
+let rawName = urlParams.get('n'); // Chúng ta dùng tham số 'n' cho ngắn gọn
+
+// Xử lý chuỗi: thay dấu gạch ngang bằng khoảng trắng và viết hoa
+let guestName = rawName ? rawName.replace(/-/g, ' ').toUpperCase() : "BẠN";
+
 /* ─────────────────────────────────────────────
    LIVE CLOCK
 ───────────────────────────────────────────── */
@@ -669,7 +679,6 @@ document.addEventListener('keydown', () => ensureAudio(), { once: true });
 /* ─────────────────────────────────────────────
    TYPEWRITER ENGINE
 ───────────────────────────────────────────── */
-
 // const segments = [
 //   { cls: 'dim',    text: 'Last login: Fri Apr 10 07:58:44 on ttys002' },
 //   { cls: 'prompt', text: '~/desktop/graduation % ' },
@@ -692,11 +701,10 @@ document.addEventListener('keydown', () => ensureAudio(), { once: true });
 //   { cls: 'dim',    text: '──────────────────────────────────────────────────' },
 // ];
 
-
 const segments = [
   
  
-  { cls: 'ok',     text: 'đủ nắng hoa sẽ nở,...' },
+  { cls: 'ok',     text: 'ĐỦ NẮNG HOA SẼ NỞ, ĐỦ TÍN RỒI TỐT NGHIỆP NHA 🌻🌻🌻' },
   { cls: 'dim',    text: '' },
   { cls: 'PROGRESS', label: 'Packaging invitation payload', steps: 32 },
   { cls: 'dim',    text: '' },
@@ -705,7 +713,6 @@ const segments = [
   { cls: 'DEPLOY', text: '' },
   { cls: 'dim',    text: '──────────────────────────────────────────────────' },
 ];
-
 
 const typewriter = document.getElementById('typewriter');
 let si = 0;
@@ -852,6 +859,11 @@ function doReveal() {
     setTimeout(() => {
       shell.style.display = 'none';
       const inv = document.getElementById('invitation-screen');
+      // CHÈN ĐOẠN NÀY: Cập nhật tên vào thiệp mời
+      const greetingElem = inv.querySelector('.greeting');
+      if (greetingElem) {
+          greetingElem.innerHTML = `THÂN MỜI <span style="color:var(--blue); font-weight:800;">${guestName}</span> ĐẾN DỰ<br>BUỔI LỄ TỐT NGHIỆP CỦA MÌNH`;
+      }
       inv.style.display = 'block';
     }, 900);
   }, 500);
