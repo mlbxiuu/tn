@@ -1,11 +1,12 @@
 ﻿
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Thư Mời Tốt Nghiệp</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dancing+Script:wght@600;700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:ital,wght@0,400;0,700;0,800;1,400;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dancing+Script:wght@600;700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:ital,wght@0,400;0,700;0,800;1,400;1,700&display=swap" rel="stylesheet">
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,7 +33,7 @@
       min-height: 100vh;
       display: flex;
       background: #050505;
-      font-family: 'DM Mono', monospace;
+      font-family: 'JetBrains Mono', monospace;
       padding: 20px 16px;
       overflow: hidden;
       transition: background 1.4s ease;
@@ -163,7 +164,7 @@
       padding: 22px 26px 10px;
       min-height: 240px;
       color: var(--green-t);
-      font-family: 'DM Mono', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 13.5px;
       line-height: 1.75;
       position: relative;
@@ -349,7 +350,7 @@
 
     /* ── CARD CONTENT ── */
     .greeting {
-      font-family: 'DM Mono', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 12px; color: var(--ink);
       text-align: center; letter-spacing: 2px;
       text-transform: uppercase; line-height: 1.7;
@@ -360,7 +361,7 @@
     .label {
       display: inline-flex; align-items: center; gap: 5px;
       background: var(--blue); color: #fff;
-      font-family: 'DM Mono', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 11px; font-weight: 500;
       letter-spacing: 2.5px; text-transform: uppercase;
       padding: 4px 11px 3px; border-radius: 2px; margin-bottom: 5px;
@@ -383,7 +384,7 @@
     .info-value.no-border { border-bottom: none; padding-bottom: 2px; }
     .info-sub {
       display: block;
-      font-family: 'DM Mono', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 11.5px; font-weight: 400;
       color: var(--ink-muted); letter-spacing: 0.5px;
       text-transform: none; margin-top: 5px; line-height: 1.55;
@@ -401,7 +402,7 @@
     }
     .map-topbar-dot { width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.35); }
     .map-topbar-label {
-      font-family: 'DM Mono', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 9px; font-weight: 500;
       color: rgba(255,255,255,0.75); letter-spacing: 2px; text-transform: uppercase;
     }
@@ -413,7 +414,7 @@
     .map-btn {
       display: flex; align-items: center; justify-content: center; gap: 8px;
       background: var(--ink); color: #fff;
-      font-family: 'DM Mono', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 12px; font-weight: 500; letter-spacing: 2px;
       text-transform: uppercase; padding: 12px 18px;
       border-radius: 2px; text-decoration: none; margin-top: 8px;
@@ -436,7 +437,7 @@
 
     .rsvp-row {
       display: flex; align-items: center; justify-content: center; gap: 6px;
-      font-family: 'DM Mono', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 11px; color: var(--ink-muted); letter-spacing: 1.5px;
       text-transform: uppercase; margin-top: 14px; padding-top: 12px;
       border-top: 1px dashed var(--line);
@@ -605,7 +606,7 @@ setInterval(updateClock, 1000);
     ctx.fillStyle = 'rgba(0,0,0,0.04)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#00FF41';
-    ctx.font = FONT_SIZE + 'px DM Mono, monospace';
+    ctx.font = FONT_SIZE + 'px JetBrains Mono, monospace';
     for (let i = 0; i < drops.length; i++) {
       const ch = CHARS[Math.floor(Math.random() * CHARS.length)];
       ctx.fillText(ch, i * FONT_SIZE, drops[i] * FONT_SIZE);
